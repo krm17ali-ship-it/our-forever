@@ -81,35 +81,79 @@
             margin-bottom: 15px;
         }
 
-        .competition-box {
+        /* =========================
+           XP LEAGUE
+        ========================= */
+
+        .league-box {
             background: #fff;
             padding: 18px;
             border-radius: 20px;
             margin-bottom: 20px;
         }
 
-        .competition-box h2 {
+        .league-box h2 {
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
-        .player {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #f8f5f2;
-            border-radius: 14px;
+        .league-subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 18px;
         }
 
-        .player:last-child {
+        .league-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: #f8f5f2;
+            border-radius: 16px;
+            transition: 0.2s;
+        }
+
+        .league-player:last-child {
             margin-bottom: 0;
         }
 
-        .player strong {
+        .league-player.leader {
+            background: #fff5c7;
+        }
+
+        .rank {
+            width: 35px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .player-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .player-name {
+            display: block;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .player-status {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .player-xp {
+            font-size: 18px;
+            font-weight: bold;
             color: #e78ba5;
+            white-space: nowrap;
         }
 
         .task {
@@ -217,7 +261,9 @@
             أهلاً بيكم في مساحتنا الخاصة
         </p>
 
-        <!-- STATS -->
+        <!-- =========================
+             MY STATS
+        ========================== -->
 
         <div class="stats">
 
@@ -253,45 +299,60 @@
 
         </div>
 
-        <h2 class="tasks-title">
-            مهام اليوم ❤️
-        </h2>
 
-        <!-- DAILY COMPETITION -->
+        <!-- =========================
+             XP LEAGUE
+        ========================== -->
 
-        <div class="competition-box">
+        <div class="league-box">
 
             <h2>
-                🏆 منافسة اليوم ❤️
+                🏆 دوري الـ XP ❤️
             </h2>
 
-            <div class="player">
-
-                <span id="player1Name">
-                    كرم ❤️
-                </span>
-
-                <strong id="player1Score">
-                    0 نقطة
-                </strong>
-
+            <div class="league-subtitle">
+                مين فينا متصدر؟ 👀
             </div>
 
-            <div class="player">
+            <div id="leaguePlayers">
 
-                <span id="player2Name">
-                    دعاء ❤️
-                </span>
+                <div class="league-player">
 
-                <strong id="player2Score">
-                    0 نقطة
-                </strong>
+                    <div class="rank">
+                        1
+                    </div>
+
+                    <div class="player-info">
+
+                        <span class="player-name">
+                            جاري التحميل...
+                        </span>
+
+                    </div>
+
+                    <div class="player-xp">
+                        0 XP
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-        <!-- DAILY PROGRESS -->
+
+        <!-- =========================
+             DAILY TASKS
+        ========================== -->
+
+        <h2 class="tasks-title">
+            مهام اليوم ❤️
+        </h2>
+
+
+        <!-- =========================
+             DAILY PROGRESS
+        ========================== -->
 
         <div class="progress-box">
 
@@ -318,7 +379,10 @@
 
         </div>
 
-        <!-- TASKS -->
+
+        <!-- =========================
+             TASKS
+        ========================== -->
 
         <button
             class="task"
@@ -352,7 +416,9 @@
             ☐ 📖 ورد قرآن
         </button>
 
+
         <p id="statusMessage"></p>
+
 
         <button id="logoutBtn">
             تسجيل الخروج
@@ -362,7 +428,10 @@
 
 </div>
 
-<!-- SUPABASE -->
+
+<!-- =========================
+     SUPABASE
+========================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -395,7 +464,7 @@
 
 
     // ==========================================
-    // STATUS MESSAGE
+    // STATUS
     // ==========================================
 
     function showStatus(message) {
@@ -420,7 +489,7 @@
         if (error) {
 
             console.error(
-                "Get User Error:",
+                "GET USER ERROR:",
                 error
             );
 
@@ -443,7 +512,7 @@
 
 
     // ==========================================
-    // GET TODAY - LOCAL DATE
+    // GET TODAY
     // ==========================================
 
     function getToday() {
@@ -537,7 +606,7 @@
 
 
     // ==========================================
-    // UPDATE SCREEN STATS
+    // SHOW MY STATS
     // ==========================================
 
     function showStats(
@@ -561,7 +630,7 @@
 
 
     // ==========================================
-    // LOAD USER STATS
+    // LOAD MY STATS
     // ==========================================
 
     async function loadUserStats() {
@@ -588,11 +657,16 @@
             );
 
             showStatus(
-                "حدث خطأ في تحميل النقاط"
+                "حدث خطأ في تحميل الـ XP"
             );
 
             return false;
         }
+
+
+        // ==================================
+        // CREATE STATS IF NOT EXIST
+        // ==================================
 
         if (!stats) {
 
@@ -606,11 +680,14 @@
                     user_id:
                         currentUser.id,
 
-                    score: 0,
+                    score:
+                        0,
 
-                    streak: 0,
+                    streak:
+                        0,
 
-                    level: 1,
+                    level:
+                        1,
 
                     last_completed_date:
                         null
@@ -642,10 +719,10 @@
             return true;
         }
 
-        console.log(
-            "Saved score:",
-            stats.score
-        );
+
+        // ==================================
+        // SHOW SAVED STATS
+        // ==================================
 
         showStats(
             Number(stats.score) || 0,
@@ -658,6 +735,262 @@
 
 
     // ==========================================
+    // LOAD XP LEAGUE
+    // ==========================================
+
+    async function loadXPLeague() {
+
+        const {
+            data: stats,
+            error: statsError
+        } = await supabaseClient
+            .from("user_stats")
+            .select(
+                "user_id, score, level"
+            )
+            .order(
+                "score",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (statsError) {
+
+            console.error(
+                "XP LEAGUE STATS ERROR:",
+                statsError
+            );
+
+            showStatus(
+                "حدث خطأ في تحميل دوري الـ XP"
+            );
+
+            return;
+        }
+
+
+        // ==========================================
+        // LOAD PROFILES
+        // ==========================================
+
+        const {
+            data: profiles,
+            error: profilesError
+        } = await supabaseClient
+            .from("profiles")
+            .select(
+                "id, name"
+            );
+
+
+        if (profilesError) {
+
+            console.error(
+                "XP LEAGUE PROFILES ERROR:",
+                profilesError
+            );
+
+            showStatus(
+                "حدث خطأ في تحميل أسماء اللاعبين"
+            );
+
+            return;
+        }
+
+
+        // ==========================================
+        // MATCH STATS WITH PROFILES
+        // ==========================================
+
+        const players =
+            stats
+                .map(
+                    function(stat) {
+
+                        const profile =
+                            profiles.find(
+                                function(profile) {
+
+                                    return (
+                                        profile.id ===
+                                        stat.user_id
+                                    );
+
+                                }
+                            );
+
+                        if (!profile) {
+                            return null;
+                        }
+
+                        return {
+
+                            id:
+                                stat.user_id,
+
+                            name:
+                                profile.name,
+
+                            score:
+                                Number(stat.score) || 0,
+
+                            level:
+                                Number(stat.level) || 1
+
+                        };
+
+                    }
+                )
+                .filter(
+                    function(player) {
+
+                        return player !== null;
+
+                    }
+                );
+
+
+        // ==========================================
+        // SORT BY XP
+        // ==========================================
+
+        players.sort(
+            function(a, b) {
+
+                return b.score - a.score;
+
+            }
+        );
+
+
+        // ==========================================
+        // SHOW LEAGUE
+        // ==========================================
+
+        const league =
+            document.getElementById(
+                "leaguePlayers"
+            );
+
+        league.innerHTML = "";
+
+
+        if (players.length === 0) {
+
+            league.innerHTML = `
+
+                <div class="league-player">
+
+                    <div class="player-info">
+
+                        <span class="player-name">
+                            لا توجد بيانات بعد ❤️
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        players.forEach(
+            function(player, index) {
+
+                const isLeader =
+                    index === 0;
+
+                const isMe =
+                    player.id ===
+                    currentUser.id;
+
+
+                let rankIcon =
+                    index + 1;
+
+
+                if (index === 0) {
+                    rankIcon = "👑";
+                }
+
+                if (index === 1) {
+                    rankIcon = "🥈";
+                }
+
+
+                const playerElement =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                playerElement.className =
+                    "league-player" +
+                    (
+                        isLeader
+                            ? " leader"
+                            : ""
+                    );
+
+
+                playerElement.innerHTML = `
+
+                    <div class="rank">
+                        ${rankIcon}
+                    </div>
+
+                    <div class="player-info">
+
+                        <span class="player-name">
+
+                            ${player.name}
+
+                            ${
+                                isMe
+                                    ? " ⭐"
+                                    : ""
+                            }
+
+                        </span>
+
+                        <span class="player-status">
+
+                            المستوى ${player.level}
+
+                            ${
+                                isLeader
+                                    ? " • المتصدر 🔥"
+                                    : ""
+                            }
+
+                        </span>
+
+                    </div>
+
+                    <div class="player-xp">
+
+                        ${player.score} XP
+
+                    </div>
+
+                `;
+
+
+                league.appendChild(
+                    playerElement
+                );
+
+            }
+        );
+    }
+
+
+    // ==========================================
     // LOAD TODAY TASKS
     // ==========================================
 
@@ -665,6 +998,7 @@
 
         const today =
             getToday();
+
 
         const {
             data: tasks,
@@ -683,6 +1017,7 @@
                 today
             );
 
+
         if (error) {
 
             console.error(
@@ -697,16 +1032,19 @@
             return false;
         }
 
+
         const buttons =
             document.querySelectorAll(
                 ".task"
             );
+
 
         buttons.forEach(
             function(button) {
 
                 const taskName =
                     button.dataset.name;
+
 
                 const savedTask =
                     tasks.find(
@@ -719,6 +1057,7 @@
 
                         }
                     );
+
 
                 if (
                     savedTask &&
@@ -733,6 +1072,7 @@
 
             }
         );
+
 
         return true;
     }
@@ -750,17 +1090,21 @@
             return;
         }
 
+
         const originalText =
             button.textContent
                 .replace("☐", "")
                 .replace("✅", "")
                 .trim();
 
+
         button.classList.add(
             "done"
         );
 
+
         button.disabled = true;
+
 
         button.textContent =
             "✅ " +
@@ -783,8 +1127,10 @@
         const lastDate =
             stats.last_completed_date;
 
+
         let newStreak =
             Number(stats.streak) || 0;
+
 
         if (
             lastDate === today
@@ -792,6 +1138,7 @@
 
             return newStreak;
         }
+
 
         if (
             lastDate === yesterday
@@ -805,223 +1152,8 @@
             newStreak = 1;
         }
 
+
         return newStreak;
-    }
-
-
-    // ==========================================
-    // UPDATE DAILY COMPETITION SCORE
-    // ==========================================
-
-    async function updateDailyCompetitionScore() {
-
-        const today =
-            getToday();
-
-        const {
-            data: tasks,
-            error: tasksError
-        } = await supabaseClient
-            .from("daily_tasks")
-            .select(
-                "points, completed"
-            )
-            .eq(
-                "user_id",
-                currentUser.id
-            )
-            .eq(
-                "task_date",
-                today
-            );
-
-        if (tasksError) {
-
-            console.error(
-                "DAILY SCORE TASKS ERROR:",
-                tasksError
-            );
-
-            return false;
-        }
-
-        let dailyScore = 0;
-
-        tasks.forEach(
-            function(task) {
-
-                if (task.completed) {
-
-                    dailyScore +=
-                        Number(task.points) || 0;
-                }
-
-            }
-        );
-
-        const {
-            error: scoreError
-        } = await supabaseClient
-            .from("daily_scores")
-            .upsert(
-                {
-                    user_id:
-                        currentUser.id,
-
-                    score:
-                        dailyScore,
-
-                    score_date:
-                        today
-                },
-                {
-                    onConflict:
-                        "user_id,score_date"
-                }
-            );
-
-        if (scoreError) {
-
-            console.error(
-                "DAILY SCORE SAVE ERROR:",
-                scoreError
-            );
-
-            return false;
-        }
-
-        return true;
-    }
-
-
-    // ==========================================
-    // LOAD DAILY COMPETITION
-    // ==========================================
-
-    async function loadDailyCompetition() {
-
-        const today =
-            getToday();
-
-        const {
-            data: scores,
-            error: scoresError
-        } = await supabaseClient
-            .from("daily_scores")
-            .select(
-                "user_id, score"
-            )
-            .eq(
-                "score_date",
-                today
-            );
-
-        if (scoresError) {
-
-            console.error(
-                "COMPETITION ERROR:",
-                scoresError
-            );
-
-            return;
-        }
-
-        const {
-            data: profiles,
-            error: profilesError
-        } = await supabaseClient
-            .from("profiles")
-            .select(
-                "id, name"
-            );
-
-        if (profilesError) {
-
-            console.error(
-                "PROFILES ERROR:",
-                profilesError
-            );
-
-            return;
-        }
-
-        // القيم الافتراضية لليوم
-        // ثم نستبدلها بالبيانات الموجودة
-
-        let karamScore = 0;
-        let doaaScore = 0;
-
-        let karamName =
-            "كرم ❤️";
-
-        let doaaName =
-            "دعاء ❤️";
-
-        scores.forEach(
-            function(item) {
-
-                const profile =
-                    profiles.find(
-                        function(p) {
-
-                            return (
-                                p.id ===
-                                item.user_id
-                            );
-
-                        }
-                    );
-
-                if (!profile) {
-                    return;
-                }
-
-                if (
-                    profile.name.includes("كرم")
-                ) {
-
-                    karamName =
-                        profile.name;
-
-                    karamScore =
-                        Number(item.score) || 0;
-                }
-
-                if (
-                    profile.name.includes("دعاء")
-                ) {
-
-                    doaaName =
-                        profile.name;
-
-                    doaaScore =
-                        Number(item.score) || 0;
-                }
-
-            }
-        );
-
-        document
-            .getElementById("player1Name")
-            .textContent =
-            karamName;
-
-        document
-            .getElementById("player1Score")
-            .textContent =
-            karamScore +
-            " نقطة";
-
-        document
-            .getElementById("player2Name")
-            .textContent =
-            doaaName;
-
-        document
-            .getElementById("player2Score")
-            .textContent =
-            doaaScore +
-            " نقطة";
     }
 
 
@@ -1036,7 +1168,9 @@
                 ".task"
             );
 
+
         let completed = 0;
+
 
         buttons.forEach(
             function(button) {
@@ -1051,8 +1185,10 @@
             }
         );
 
+
         const total =
             buttons.length;
+
 
         const percentage =
             total === 0
@@ -1061,12 +1197,14 @@
                     (completed / total) * 100
                 );
 
+
         document
             .getElementById("progressText")
             .textContent =
             completed +
             " / " +
             total;
+
 
         document
             .getElementById("progressFill")
@@ -1086,34 +1224,43 @@
             return;
         }
 
+
         if (
             button.classList.contains("done")
         ) {
             return;
         }
 
+
         if (isProcessingTask) {
             return;
         }
 
+
         isProcessingTask = true;
+
 
         showStatus(
             "جاري تسجيل المهمة..."
         );
 
+
         const taskName =
             button.dataset.name;
+
 
         const points =
             Number(
                 button.dataset.points
             );
 
+
         const today =
             getToday();
 
+
         try {
+
 
             // ==================================
             // CHECK EXISTING TASK
@@ -1140,6 +1287,7 @@
                     today
                 )
                 .maybeSingle();
+
 
             if (checkError) {
 
@@ -1189,6 +1337,7 @@
                     .from("daily_tasks")
                     .insert(
                         {
+
                             user_id:
                                 currentUser.id,
 
@@ -1203,8 +1352,10 @@
 
                             task_date:
                                 today
+
                         }
                     );
+
 
                 if (insertError) {
 
@@ -1237,6 +1388,7 @@
                         existingTask.id
                     );
 
+
                 if (updateTaskError) {
 
                     console.error(
@@ -1254,7 +1406,7 @@
 
 
             // ==================================
-            // GET CURRENT USER STATS
+            // GET CURRENT XP
             // ==================================
 
             const {
@@ -1271,6 +1423,7 @@
                 )
                 .maybeSingle();
 
+
             if (statsError) {
 
                 console.error(
@@ -1279,7 +1432,7 @@
                 );
 
                 showStatus(
-                    "تم حفظ المهمة لكن حدث خطأ في النقاط"
+                    "تم حفظ المهمة لكن حدث خطأ في الـ XP"
                 );
 
                 return;
@@ -1293,6 +1446,7 @@
             const oldScore =
                 Number(stats?.score) || 0;
 
+
             const newScore =
                 oldScore + points;
 
@@ -1302,7 +1456,14 @@
             // ==================================
 
             const newStreak =
-                await updateStreak(stats);
+                await updateStreak(
+                    stats || {
+                        score: 0,
+                        streak: 0,
+                        level: 1,
+                        last_completed_date: null
+                    }
+                );
 
 
             // ==================================
@@ -1316,7 +1477,7 @@
 
 
             // ==================================
-            // SAVE USER STATS
+            // SAVE XP
             // ==================================
 
             const {
@@ -1325,6 +1486,7 @@
                 .from("user_stats")
                 .update(
                     {
+
                         score:
                             newScore,
 
@@ -1336,12 +1498,14 @@
 
                         last_completed_date:
                             today
+
                     }
                 )
                 .eq(
                     "user_id",
                     currentUser.id
                 );
+
 
             if (updateStatsError) {
 
@@ -1351,7 +1515,7 @@
                 );
 
                 showStatus(
-                    "تم حفظ المهمة لكن حدث خطأ في تحديث النقاط"
+                    "تم حفظ المهمة لكن حدث خطأ في تحديث الـ XP"
                 );
 
                 return;
@@ -1359,7 +1523,7 @@
 
 
             // ==================================
-            // UPDATE SCREEN STATS
+            // UPDATE MY STATS
             // ==================================
 
             showStats(
@@ -1379,13 +1543,6 @@
 
 
             // ==================================
-            // UPDATE DAILY COMPETITION
-            // ==================================
-
-            await updateDailyCompetitionScore();
-
-
-            // ==================================
             // UPDATE PROGRESS
             // ==================================
 
@@ -1393,10 +1550,10 @@
 
 
             // ==================================
-            // RELOAD COMPETITION
+            // RELOAD XP LEAGUE
             // ==================================
 
-            await loadDailyCompetition();
+            await loadXPLeague();
 
 
             showStatus(
@@ -1404,6 +1561,7 @@
                 points +
                 " XP"
             );
+
 
         } catch (error) {
 
@@ -1425,7 +1583,7 @@
 
 
     // ==========================================
-    // SETUP TASK BUTTONS
+    // SETUP TASKS
     // ==========================================
 
     function setupTasks() {
@@ -1434,6 +1592,7 @@
             document.querySelectorAll(
                 ".task"
             );
+
 
         buttons.forEach(
             function(button) {
@@ -1464,13 +1623,14 @@
             .auth
             .signOut();
 
+
         window.location.href =
             "index.html";
     }
 
 
     // ==========================================
-    // START APPLICATION
+    // START APP
     // ==========================================
 
     async function startApp() {
@@ -1479,27 +1639,36 @@
             "جاري تحميل بياناتك..."
         );
 
+
         const loggedIn =
             await getCurrentUser();
+
 
         if (!loggedIn) {
             return;
         }
 
+
         const statsLoaded =
             await loadUserStats();
+
 
         if (!statsLoaded) {
             return;
         }
 
+
         await loadTodayTasks();
+
 
         updateDailyProgress();
 
-        await loadDailyCompetition();
+
+        await loadXPLeague();
+
 
         setupTasks();
+
 
         document
             .getElementById("logoutBtn")
@@ -1507,6 +1676,7 @@
                 "click",
                 logout
             );
+
 
         showStatus(
             "أهلاً بيك ❤️"
