@@ -1,0 +1,186 @@
+<title>Our Forever ❤️</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background: #fcecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-box {
+        width: 90%;
+        max-width: 400px;
+        background: white;
+        padding: 30px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .heart {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        margin: 10px 0;
+        color: #333;
+    }
+
+    p {
+        color: #777;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin: 8px 0;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 12px;
+        background: #e78ba5;
+        color: white;
+        font-size: 17px;
+        cursor: pointer;
+    }
+
+    #message {
+        min-height: 25px;
+        margin-top: 15px;
+    }
+</style>
+<div class="login-box">
+
+    <div class="heart">❤️</div>
+
+    <h1>Our Forever</h1>
+
+    <p>مكان خاص بيني وبينك</p>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="البريد الإلكتروني"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="كلمة المرور"
+    >
+
+    <button id="loginBtn">
+        دخول 🔐
+    </button>
+
+    <p id="message"></p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL =
+        "https://rxyongbssvpqwijycrxl.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_HeV2SjcdkjAwVquKcABC5w_FnOwF1SR";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const message =
+        document.getElementById("message");
+
+
+    async function login() {
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+            message.textContent =
+                "اكتب البريد الإلكتروني وكلمة المرور ❤️";
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = "جاري الدخول...";
+
+        message.textContent = "";
+
+        const result =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+        if (result.error) {
+
+            console.error(result.error);
+
+            message.textContent =
+                result.error.message;
+
+            loginBtn.disabled = false;
+            loginBtn.textContent = "دخول 🔐";
+
+            return;
+        }
+
+        message.textContent =
+            "تم تسجيل الدخول بنجاح ❤️";
+
+        setTimeout(function () {
+
+            window.location.href = "home.html";
+
+        }, 500);
+    }
+
+
+    loginBtn.addEventListener(
+        "click",
+        login
+    );
+
+
+    passwordInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+                login();
+            }
+
+        }
+    );
+</script>
